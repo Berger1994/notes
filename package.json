@@ -1,0 +1,18 @@
+{
+  "name": "lisa-pdf",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@ironsoftware/ironpdf": "^2023.11.2",
+    "@ironsoftware/ironpdf-engine-windows-x64": "^2023.11.2",
+    "express": "^4.18.2",
+    "express-fileupload": "^1.4.3",
+    "pdf2pic": "^3.1.0"
+  }
+}
