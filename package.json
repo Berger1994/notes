@@ -7,10 +7,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@ironsoftware/ironpdf": "^2023.11.2",
-    "@ironsoftware/ironpdf-engine-windows-x86": "^2023.11.2",
-    "@ironsoftware/ironpdf-engine-linux-x64": "^2023.11.2",
     "express": "^4.18.2",
-    "express-fileupload": "^1.4.3"
+    "express-fileupload": "^1.4.3",
+    "pdf-to-img": "^2.1.2"
   }
 }
