@@ -9,22 +9,18 @@
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 
     <style>
-        html {
-            height: -webkit-fill-available;
-        }
-
-        #content {
-            max-height: 100vh;
-            max-height: -webkit-fill-available;
-            object-fit: contain;
+        html,
+        body {
+            height: 100%;
+            width: 100%;
+            overflow: auto;
         }
     </style>
 </head>
 
 <body>
     <div style="display: flex; justify-content: center; position: relative;">
-        <div id="content">
-            x
+        <div id="content" style="height: 100vh; height: var(--app-height);">
         </div>
         <span id="previous" style="position: absolute; top:0; left:0;bottom: 0; width: 50%;"></span>
         <span id="next" style="position: absolute; top:0; right:0;bottom: 0; width: 50%;"></span>
@@ -43,7 +39,7 @@
             fetch(`/notes/pdfs/${id}`).then(res => res.json())
                 .then(pdf => {
                     contentElement.innerHTML = pdf.images.map((image, i) => (
-                        `<img src="/notes/pdfs/${id}/${image}" style="max-height: 100vh; object-fit: contain; display: ${i === 0 ? "block" : "none"}" />`
+                        `<img src="/notes/pdfs/${id}/${image}" style="height: 100vh; height: var(--app-height); object-fit: contain; display: ${i === 0 ? "block" : "none"}" />`
                     )).join("");
                 })
 
@@ -65,6 +61,15 @@
                 elements[active].style.display = "none";
                 elements[newIndex].style.display = "block";
             });
+
+            document.addEventListener('touchmove', e => e.preventDefault(), false);
+
+            const appHeight = () => {
+                const doc = document.documentElement
+                doc.style.setProperty(`--app-height`, `${window.innerHeight}px`)
+            }
+            window.addEventListener("resize", appHeight)
+            appHeight()
         })();
     </script>
 </body>
