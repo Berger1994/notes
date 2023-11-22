@@ -15,6 +15,7 @@ const { PdfDocument } = require("@ironsoftware/ironpdf");
 });*/
 
 const pdfsDir = __dirname + '/pdfs/';
+if (!fs.existsSync(pdfsDir)) fs.mkdirSync(pdfsDir);
 
 app.use(fileUpload());
 const router = express.Router();
