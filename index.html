@@ -33,7 +33,7 @@
                 .then(res => res.json())
                 .then(data => {
                     uploadedListElement.innerHTML = data.map(pdf => `
-                        <a href="/notes/show.html?name=${encodeURIComponent(pdf.name)}" class="list-group-item list-group-item-action">${pdf.name}</a>
+                        <a href="/notes/show.html?id=${pdf.id}" class="list-group-item list-group-item-action">${pdf.name}</a>
                     `).join("");
                 })
 

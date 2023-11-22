@@ -22,7 +22,7 @@ const router = express.Router();
 
 router.post('/upload', (req, res) => {
     const file = req.files.file;
-    const dir = `${pdfsDir}${file.name}`;
+    const dir = `${pdfsDir}${new Date().getTime()}/`;
     const path = dir + "/content.pdf";
 
     if (fs.existsSync(dir)) {
@@ -31,6 +31,7 @@ router.post('/upload', (req, res) => {
     }
     fs.mkdirSync(dir);
 
+    fs.writeFileSync(dir + "/name", file.name);
     file.mv(path, async (err) => {
         if (err) return res.status(500).send(err);
 
@@ -49,18 +50,24 @@ router.get("/pdfs", (req, res) => {
     const pdfs = fs.readdirSync(pdfsDir);
 
     res.send(pdfs.map(pdf => {
-        const images = fs.readdirSync(`${pdfsDir}${pdf}`);
+        const dir = `${pdfsDir}${pdf}`;
+        const name = fs.readFileSync(dir + "/name", { encoding: 'utf8', flag: 'r' });
+        const images = fs.readdirSync(dir);
         return {
-            name: pdf,
+            id: pdf,
+            name,
             images: images.filter(i => i.startsWith("image-")),
         };
     }))
 });
-router.get("/pdfs/:name", (req, res) => {
-    const { name } = req.params;
-    const images = fs.readdirSync(`${pdfsDir}${name}`);
+router.get("/pdfs/:id", (req, res) => {
+    const { id } = req.params;
+    const dir = `${pdfsDir}${id}`;
+    const name = fs.readFileSync(dir + "/name", { encoding: 'utf8', flag: 'r' });
+    const images = fs.readdirSync(dir);
     res.send({
-        name: name,
+        id: id,
+        name,
         images: images.filter(i => i.startsWith("image-")),
     });
 });

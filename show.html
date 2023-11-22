@@ -31,13 +31,13 @@
         crossorigin="anonymous"></script>
     <script>
         (() => {
-            const name = new URLSearchParams(window.location.search).get("name");
+            const id = new URLSearchParams(window.location.search).get("id");
             const contentElement = document.getElementById("content");
 
-            fetch(`/notes/pdfs/${name}`).then(res => res.json())
+            fetch(`/notes/pdfs/${id}`).then(res => res.json())
                 .then(pdf => {
                     contentElement.innerHTML = pdf.images.map((image, i) => (
-                        `<img src="/notes/pdfs/${name}/${image}" style="max-height: 100vh; object-fit: contain; display: ${i === 0 ? "block" : "none"}" />`
+                        `<img src="/notes/pdfs/${id}/${image}" style="max-height: 100vh; object-fit: contain; display: ${i === 0 ? "block" : "none"}" />`
                     )).join("");
                 })
 
