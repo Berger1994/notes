@@ -4,7 +4,7 @@ const fileUpload = require('express-fileupload');
 const url = require('url');
 const fs = require("fs");
 
-const { pdf } = require("pdf-to-img");
+const { PdfDocument } = require("@ironsoftware/ironpdf");
 
 const app = express()
 const port = 3000
@@ -32,13 +32,16 @@ router.post('/upload', (req, res) => {
     file.mv(path, async (err) => {
         if (err) return res.status(500).send(err);
 
-        let i = 0;
-        for await (const page of await pdf(path)) {
-            fs.writeFileSync(dir + `image-${i++}.jpg`, page);
+        await PdfDocument.fromFile(path).then(async (pdf) => {
+            const pages = await pdf.getPageCount();
+            for (let i = 0; i < pages; i++) {
+                await pdf.rasterizeToImageFiles(dir + `image-${i}.png`, { fromPages: [i] });
+            }
 
-        }
+            res.redirect(`/notes/show.html?id=${id}`);
+        });
 
-        res.redirect(`/notes/show.html?id=${id}`);
+
     })
 });
 
