@@ -4,15 +4,11 @@ const fileUpload = require('express-fileupload');
 const url = require('url');
 const fs = require("fs");
 
+const { pdf } = require("pdf-to-img");
+
 const app = express()
 const port = 3000
 
-const { PdfDocument } = require("@ironsoftware/ironpdf");
-// Convert PDF File to a PNG File
-/*await PdfDocument.fromFile("./sample-pdf-file.pdf").then((resolve) => {
-    resolve.rasterizeToImageFiles("./images/sample-pdf-file.png");
-    return resolve;
-});*/
 
 const pdfsDir = __dirname + '/pdfs/';
 if (!fs.existsSync(pdfsDir)) fs.mkdirSync(pdfsDir);
@@ -22,8 +18,9 @@ const router = express.Router();
 
 router.post('/upload', (req, res) => {
     const file = req.files.file;
-    const dir = `${pdfsDir}${new Date().getTime()}/`;
-    const path = dir + "/content.pdf";
+    const id = new Date().getTime();
+    const dir = `${pdfsDir}${id}/`;
+    const path = dir + "content.pdf";
 
     if (fs.existsSync(dir)) {
         res.status(500).send("hast du schon hochgeladen!");
@@ -31,18 +28,17 @@ router.post('/upload', (req, res) => {
     }
     fs.mkdirSync(dir);
 
-    fs.writeFileSync(dir + "/name", file.name);
+    fs.writeFileSync(dir + "name", file.name);
     file.mv(path, async (err) => {
         if (err) return res.status(500).send(err);
 
-        await PdfDocument.fromFile(path).then(async (pdf) => {
-            const pages = await pdf.getPageCount();
-            for (let i = 0; i < pages; i++) {
-                await pdf.rasterizeToImageFiles(dir + `image-${i}.png`, { fromPages: [i] });
-            }
+        let i = 0;
+        for await (const page of await pdf(path)) {
+            fs.writeFileSync(dir + `image-${i++}.jpg`, page);
 
-            res.send('File uploaded!');
-        });
+        }
+
+        res.redirect(`/notes/show.html?id=${id}`);
     })
 });
 
